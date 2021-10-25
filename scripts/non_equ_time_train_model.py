@@ -45,7 +45,7 @@ filters = int(config['input']['filters'])
 logistic_mix = int(config['input']['logistic_mix']) 
 dropout = float(config['input']['dropout']) 
 
-t_space = np.linspace(0,C-1,C)
+# t_space = np.linspace(0,C-1,C)
 resolution = 10
 correction = C/resolution
 t_space = correction*np.linspace(0,resolution-1,resolution)
@@ -75,9 +75,10 @@ for t in t_space:
         return (x['image'],)  # (input, output) of the model
 
     train_it = train_data.map(image_preprocess).batch(batch_size).shuffle(shuffbuff)
-
+    test_it = test_data.map(image_preprocess).batch(batch_size).shuffle(shuffbuff)
 
     image_shape = shape
+    
     # Define a Pixel CNN network
     dist = tfd.PixelCNN(
         image_shape=image_shape,
@@ -120,15 +121,20 @@ for t in t_space:
 
     # Create a callback that saves the model's weights
     cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                    # save_freq='epoch',
+                                                    # monitror='val_loss',
                                                     save_weights_only=True,
                                                     verbose=1)
     print("Fitting...")
     History = model.fit(train_it,
               epochs=epochs,
               verbose=2,
+              validation_data=test_it,
               callbacks=[cp_callback])  # Pass callback to training
-
+    
+    # print(History.history["val_loss"])
     # save training loss
+    # np.savetxt('validation_loss.dat', History.history["val_loss"])
     loss = np.zeros((2,epochs)) 
     loss[0,:], loss[1,:] = np.arange(0, epochs), History.history["loss"]
     np.savetxt('loss.dat',np.c_[loss[0,:],loss[1,:]])

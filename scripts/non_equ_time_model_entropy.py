@@ -4,7 +4,7 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 import tensorflow_probability as tfp
 import numpy as np
-from non_equ_dataset_prep import like_mnist
+from non_equ_time_dataset_prep import like_mnist
 import pickle
 import os
 import argparse

@@ -22,11 +22,10 @@ for direc in dirs:
 
     S=[] 
     std_err=[]
-    resolution = 10
+    resolution = 50
     times = int(C/resolution)
     t_space = times*(np.linspace(0,resolution-1,resolution))
     # t_space = np.delete(t_space, -1)
-    print(t_space)
     
     for t in t_space:
         t = int(t)
@@ -42,13 +41,13 @@ for direc in dirs:
         else:
             S.append(float('nan'))
             std_err.append(float('nan'))
-    print(S)
-
-    np.savetxt("S.dat", np.c_[t_space,S])
-    plt.plot(t_space,S, label = ("T="+str(T)))
-    plt.xlabel("Entropy")
-    plt.ylabel("Time")
+    print(std_err)
     
+    np.savetxt("S.dat", np.c_[t_space,S])
+    plt.errorbar(t_space,S,std_err,label = ("T="+str(T)))
+    plt.ylabel("Entropy")
+    plt.xlabel("Time")
+
 plt.title("Cycle Entropy")
 plt.legend()
 plt.show()
