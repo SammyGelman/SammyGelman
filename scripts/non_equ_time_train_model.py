@@ -46,7 +46,7 @@ logistic_mix = int(config['input']['logistic_mix'])
 dropout = float(config['input']['dropout']) 
 
 # t_space = np.linspace(0,C-1,C)
-resolution = 10
+resolution = 50
 correction = C/resolution
 t_space = correction*np.linspace(0,resolution-1,resolution)
 

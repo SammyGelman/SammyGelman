@@ -47,7 +47,7 @@ n_samples = int(config['input']['n_samples'])
 p = dict(config['input'])
 prefix = str(config['input']['prefix'])
 
-resolution = 10
+resolution = 50
 correction = C/resolution
 t_space = correction*np.linspace(0,resolution-1,resolution)
 

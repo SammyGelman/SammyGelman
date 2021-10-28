@@ -10,7 +10,6 @@ import os
 from matplotlib import cm
 from figures import *
 import argparse
-
 dirs = next(os.walk('.'))[1]
 # dirs = os.listdir()
 # dirs = dirs[0:10]
@@ -25,7 +24,10 @@ resolution = args.resolution[0]
 
 #create fig
 fig = create_figure()
-ax = create_single_panel(fig,xlabel="Time",ylabel="Entropy",palette='cool',numcolors=len(dirs))
+ax = create_single_panel(fig,xlabel="Temp",ylabel="Entropy",palette='magma')
+
+S_list=[]
+T_list=[]
 
 for direc in dirs:
     config.optionxform = str
@@ -53,14 +55,16 @@ for direc in dirs:
                 data = data.reshape([1,])
             S.append(sum(data)/len(data))
             std_err.append(np.std(data))
-        else:
-            S.append(float('nan'))
-            std_err.append(float('nan'))
-    
-    np.savetxt("S.dat", np.c_[t_space,S])
-    ax.errorbar(t_space,S,std_err,label = ("T="+str(T)))
+        # else:
+        #     S.append(float('nan'))
+        #     std_err.append(float('nan'))
+        #
+    S_list.append(sum(S))
+    T_list.append(T)
 
-# plt.title("Cycle Entropy")
+print(S_list)
+ax.plot(T_list,S_list)
+plt.title("Mean Entropy")
 # plt.legend()
 # plt.show()
-finalize_and_save(fig, 'non_equilibrium_entropy.pdf')
+finalize_and_save(fig, 'mean_S_temp.pdf')
