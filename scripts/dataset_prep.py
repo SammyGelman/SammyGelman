@@ -19,16 +19,12 @@ def like_mnist(T,L,sample_batches=27,buffer_size=1):
             yield sample_prep(samples[sname])
 
     shape = (int(L),int(L),1)
-    sample_batches_rand = np.linspace(0,sample_batches-1,sample_batches) 
-    random.shuffle(sample_batches_rand)
-    for batch in sample_batches_rand:
-        print('/gcohenlab/data/samuelgelman/data/ising_data/ising_samples_l'+str(L)+'/T'+str(T)+'/samples_rank'+str(int(batch))+'.npz')
-        ds_samples = tf.data.Dataset.from_generator(
-            get_samples,
-            args=['/gcohenlab/data/samuelgelman/data/ising_data/ising_samples_l'+str(L)+'/T'+str(T)+'/samples_rank'+str(int(batch))+'.npz'],
-            output_types={'image': tf.int64, 'label': tf.float64},
-            output_shapes={'image': shape, 'label': None}
+    ds_samples = tf.data.Dataset.from_generator(
+        get_samples,
+        # args=['/gcohenlab/data/samuelgelman/data/ising_data/ising_samples_l'+str(L)+'/T'+str(T)+'/samples_rank'+str(int(batch))+'.npz'],
+        args=['/gcohenlab/data/samuelgelman/data/ising_data/ising_samples_l'+str(L)+'/T'+str(T)+'/final_samples.npz'],
+        output_types={'image': tf.int64, 'label': tf.float64},
+        output_shapes={'image': shape, 'label': None}
         )
-
     ds_samples = tf.data.Dataset.prefetch(ds_samples,buffer_size)
     return shape, ds_samples

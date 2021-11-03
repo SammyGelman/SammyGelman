@@ -50,25 +50,19 @@ results = []
 
 #trying my dataset out
 image_shape, data = like_mnist(T,L)
-# Load MNIST from tensorflow_datasets
-# data = tfds.load('mnist')
 # train_data, test_data = data['train'], data['test']
 # print(train_data,test_data)
 # data = data.shuffle(shuffbuff)
 train_data = data.take(training_samples)
-# train_data = train_data.take(1000)
 test_data = data.skip(training_samples).take(test_samples)
-# test_data = test_data.take(1000)
 
 def image_preprocess(x):
     x['image'] = tf.cast(x['image'], tf.float32)
     return (x['image'],)  # (input, output) of the model
 
 train_it = train_data.map(image_preprocess).batch(batch_size).shuffle(shuffbuff)
+test_it = test_data.map(image_preprocess).batch(batch_size).shuffle(shuffbuff)
 
-
-# image_shape = (28,28, 1)
-# image_shape = shape
 # Define a Pixel CNN network
 dist = tfd.PixelCNN(
     image_shape=image_shape,
@@ -121,7 +115,13 @@ H = model.fit(train_it,
           callbacks=[cp_callback])  # Pass callback to training
 
 # save training loss
-# loss = np.zeros((2,epochs)) 
-# loss[0,:], loss[1,:] = np.arange(0, epochs), H.history["loss"]
+loss = np.zeros((2,epochs))
+loss[0,:], loss[1,:] = np.arange(0, epochs), H.history["loss"]
 np.savetxt('loss.dat',np.c_[loss[0,:],loss[1,:]])
-np.savetxt('validation_loss.dat',H.history["val_loss"])
+# np.savetxt((str(t)+'/loss.dat'),H.history["loss"])
+
+# save val loss
+val_loss = np.zeros((2,epochs))
+val_loss[0,:], val_loss[1,:] = np.arange(0, epochs), H.history["val_loss"]
+np.savetxt(('validation_loss.dat'), np.c_[val_loss[0,:],val_loss[1,:]])
+

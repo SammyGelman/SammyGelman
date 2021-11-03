@@ -32,7 +32,7 @@ config.read("run.param")
 T = float(config['input']['T'])
 L = int(config['input']['L'])
 C = int(config['input']['C'])
-H = float(config['input']['H'])
+H_field = float(config['input']['H'])
 prefix = str(config['input']['prefix'])
 epochs = int(config['input']['epochs'])
 batch_size = int(config['input']['batch_size']) 
@@ -59,7 +59,7 @@ for t in t_space:
     results = []
     #trying my dataset out
     t = int(t)
-    shape, data = like_mnist(prefix,t,T,L,H)
+    shape, data = like_mnist(prefix,t,T,L,H_field)
     # Load MNIST from tensorflow_datasets
     # data = tfds.load('mnist')
     # train_data, test_data = data['train'], data['test']
@@ -75,7 +75,7 @@ for t in t_space:
         return (x['image'],)  # (input, output) of the model
 
     train_it = train_data.map(image_preprocess).batch(batch_size).shuffle(shuffbuff)
-
+    test_it = test_data.map(image_preprocess).batch(batch_size).shuffle(shuffbuff)
 
     image_shape = shape
     # Define a Pixel CNN network
@@ -114,7 +114,7 @@ for t in t_space:
             metrics=[])
 
     # Save weights to  checkpoint file
-    checkpoint_path = str(t)+"/weights/cp.ckpt"
+    checkpoint_path = "weights/cp.ckpt"
     checkpoint_dir = os.path.dirname(checkpoint_path)
     print(checkpoint_dir)
 
@@ -123,7 +123,7 @@ for t in t_space:
                                                     save_weights_only=True,
                                                     verbose=1)
     print("Fitting...")
-    History = model.fit(train_it,
+    H = model.fit(train_it,
               epochs=epochs,
               verbose=2,
               callbacks=[cp_callback])  # Pass callback to training
@@ -132,6 +132,12 @@ for t in t_space:
     loss = np.zeros((2,epochs)) 
     loss[0,:], loss[1,:] = np.arange(0, epochs), History.history["loss"]
     np.savetxt('loss.dat',np.c_[loss[0,:],loss[1,:]])
+    
+    # save training val_loss
+    val_loss = np.zeros((2,epochs)) 
+    val_loss[0,:], val_loss[1,:] = np.arange(0, epochs), History.history["val_loss"]
+    np.savetxt('val_loss.dat',np.c_[val_loss[0,:],val_loss[1,:]])
+
 
 
 # tfd = tfp.distributions

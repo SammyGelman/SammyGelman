@@ -15,7 +15,7 @@ config.read("run.param")
 T = float(config['input']['T'])
 L = int(config['input']['L'])
 C = int(config['input']['C'])
-H_town = float(config['input']['H'])
+H_field = float(config['input']['H'])
 prefix = str(config['input']['prefix'])
 epochs = int(config['input']['epochs'])
 batch_size = int(config['input']['batch_size'])
@@ -41,7 +41,7 @@ def run(t):
     results = []
     #trying my dataset out
     t = int(t)
-    image_shape, data = like_mnist(prefix,t,T,L,H_town)
+    image_shape, data = like_mnist(prefix,t,T,L,H_field)
     # train_data, test_data = data['train'], data['test']
     # data = data.shuffle(shuffbuff)
     train_data = data.take(training_samples)
