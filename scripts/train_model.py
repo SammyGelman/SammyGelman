@@ -85,26 +85,19 @@ model = tfk.Model(inputs=image_input, outputs=log_prob)
 model.add_loss(-tf.reduce_mean(log_prob))
 
 # Compile and train the model
-if T<=1:
-    model.compile(
-        optimizer=tfk.optimizers.Adam(learning_rate/4),
-        metrics=[])
-elif T>=4:
-    model.compile(
-        optimizer=tfk.optimizers.Adam(learning_rate*3),
-        metrics=[])
-else:
-    model.compile(
-        optimizer=tfk.optimizers.Adam(learning_rate),
-        metrics=[])
+model.compile(
+    optimizer=tfk.optimizers.Adam(learning_rate),
+    metrics=[])
 
 # Save weights to  checkpoint file
-checkpoint_path = "weights/cp.ckpt"
+checkpoint_path = "weights_{epoch:d}/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 print(checkpoint_dir)
 
 # Create a callback that saves the model's weights
 cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                save_freq='epoch',
+                                                save_best_only=False,
                                                 save_weights_only=True,
                                                 verbose=1)
 print("Fitting...")

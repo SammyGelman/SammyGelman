@@ -92,37 +92,38 @@ secondary_keys.remove('n_samples')
 # model_dir = item_name("/home/sammy/gcohenlabfs/data/samuelgelman/data/ising_models/investigation",p,secondary_keys, excluded_keys=['n_samples'])
 model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/investigation",p,secondary_keys)
 
-model.load_weights(str(model_dir)+"/weights/cp.ckpt")
+def write_entropy(epoch):
+    model.load_weights(str(model_dir)+"/weights_"+str(epoch+1)+"/cp.ckpt")
+    print(str(model_dir)+"/weights_"+str(epoch+1)+"/cp.ckpt")
+    start_time = time.perf_counter()
 
-start_time = time.perf_counter()
+    # sample n images from the trained model
+    print("Sampling...")
+    # samples = dist.sample(n_samples)
 
-# sample n images from the trained model
-print("Sampling...")
-# samples = dist.sample(n_samples)
+    # # Plot samples:
+    entropies = []
 
-# # Plot samples:
-entropies = []
+    for sample in samples_mc:
+        entropies.append(dist.log_prob(sample['image'].numpy()).numpy())
+        # s = sample.numpy()[:,:,0]
 
-for sample in samples_mc:
-    entropies.append(dist.log_prob(sample['image'].numpy()).numpy())
-    # s = sample.numpy()[:,:,0]
+    entropy = sum(entropies)/(n_samples*L**2)*(-1)
+    results.append(entropy)
 
-print(entropies)
+    end_time = time.perf_counter()
+    cnn_time = end_time - start_time
 
-entropy = sum(entropies)/(n_samples*L**2)*(-1)
-results.append(entropy)
+    with open('entropy.txt', 'a') as f:
+        f.write(str(results[-1])+'\n')
+    f.close()
 
-end_time = time.perf_counter()
-cnn_time = end_time - start_time
+    with open('timer.txt', 'a') as f:
+        f.write(str('This is the pixelCNN time')+'\n'+str(cnn_time)+'\n')
+    f.close()
 
-with open('entropy.txt', 'a') as f:
-    f.write(str(results[0])+'\n')
-f.close()
-
-with open('timer.txt', 'a') as f:
-    f.write(str('This is the pixelCNN time')+'\n'+str(cnn_time)+'\n')
-f.close()
-
+for epoch in range(epochs):
+    write_entropy(epoch)
 #
 # start_time = time.perf_counter()
 #

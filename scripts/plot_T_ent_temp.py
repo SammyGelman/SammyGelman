@@ -42,7 +42,8 @@ for dir in dirs:
         data = np.loadtxt(entropy_filename)
         if data.shape == ():
             data = data.reshape([1,])
-        S.append(sum(data)/len(data))
+        # S.append(sum(data)/len(data))
+        S.append(sum(data[-1:])/1)
         std_err.append(np.std(data))
     else:
         S.append(float('nan'))
@@ -55,6 +56,7 @@ print(onsager_T)
 
 print("This is T: "), print(T)
 print("This is S: "), print(S)
+# add on for temps 10 and 15
 T,S=T[0:-2],S[0:-2]
 print(len(S),len(T))
 def specific_temps(T,onsager_T,onsager_S):
@@ -76,11 +78,11 @@ print(len(specific_S))
 
 # axs[0].plot(onsager_T,onsager_S)
 # axs[0].scatter(T,S)
-# axs[0].errorbar(T,S,yerr=std_err[0:-2],fmt=' ')
 #
 ax[0].plot(onsager_T,onsager_S)
 ax[0].scatter(T,S)
 ax[0].errorbar(T,S,yerr=std_err[0:-2],fmt=' ')
+# ax[0].errorbar(T,S,yerr=std_err,fmt=' ')
 
 
 
