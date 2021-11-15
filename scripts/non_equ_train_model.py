@@ -46,7 +46,7 @@ logistic_mix = int(config['input']['logistic_mix'])
 dropout = float(config['input']['dropout']) 
 
 # t_space = np.linspace(0,C-1,C)
-resolution = 5
+resolution = 50
 correction = C/resolution
 t_space = correction*np.linspace(0,resolution-1,resolution)
 
@@ -66,9 +66,7 @@ for t in t_space:
     # print(train_data,test_data)
     # data = data.shuffle(shuffbuff)
     train_data = data.take(training_samples)
-    # train_data = train_data.take(1000)
     test_data = data.skip(training_samples).take(test_samples)
-    # test_data = test_data.take(1000)
 
     def image_preprocess(x):
         x['image'] = tf.cast(x['image'], tf.float32)
@@ -100,21 +98,12 @@ for t in t_space:
     model.add_loss(-tf.reduce_mean(log_prob))
 
     # Compile and train the model
-    if T<=1:
-        model.compile(
-            optimizer=tfk.optimizers.Adam(learning_rate/4),
-            metrics=[])
-    elif T>=4:
-        model.compile(
-            optimizer=tfk.optimizers.Adam(learning_rate*3),
-            metrics=[])
-    else:
-        model.compile(
-            optimizer=tfk.optimizers.Adam(learning_rate),
-            metrics=[])
+    model.compile(
+        optimizer=tfk.optimizers.Adam(learning_rate),
+        metrics=[])
 
     # Save weights to  checkpoint file
-    checkpoint_path = "weights/cp.ckpt"
+    checkpoint_path = "weights_{epoch:d}/cp.ckpt"
     checkpoint_dir = os.path.dirname(checkpoint_path)
     print(checkpoint_dir)
 
@@ -225,3 +214,9 @@ for t in t_space:
 loss = np.zeros((2,epochs)) 
 loss[0,:], loss[1,:] = np.arange(0, epochs), History.history["loss"]
 np.savetxt('loss.dat',np.c_[loss[0,:],loss[1,:]])
+
+# save val loss
+val_loss = np.zeros((2,epochs))
+val_loss[0,:], val_loss[1,:] = np.arange(0, epochs), H.history["val_loss"]
+np.savetxt(('validation_loss.dat'), np.c_[val_loss[0,:],val_loss[1,:]])
+

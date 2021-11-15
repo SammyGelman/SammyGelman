@@ -76,10 +76,7 @@ for direc in dirs:
         S_list.append(sum(S))
         T_list.append(T)
 
-print(len(S_list))
-print(len(T_list))
 np.savetxt("Mean_S_Temp.dat", np.c_[T_list,S_list])
-print(S_list)
 ax.plot(T_list,S_list)
 plt.title("Mean Entropy")
 # plt.legend()

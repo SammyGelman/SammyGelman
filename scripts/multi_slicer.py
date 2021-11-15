@@ -29,7 +29,8 @@ def batch_catcher(batches,T,H,C,prefix):
     for batch in sample_batches_rand:
         # x = np.load('samples_rank'+str(int(batch))+'.npz')
         # x = time_extract('/gcohenlab/data/samuelgelman/data/non_equ_data/non_equilibrium_samples_H'+str(H)+'/T'+str(T)+'/samples_rank'+str(int(batch))+'.npz')
-        x = np.load("/home/sammy/gcohenlabfs/data/samuelgelman/data/non_equ_data/phase_diagram_data/"+str(prefix)+"/samples_rank"+str(int(batch))+".npz")
+        # x = np.load("/home/sammy/gcohenlabfs/data/samuelgelman/data/non_equ_data/phase_diagram_data/"+str(prefix)+"/samples_rank"+str(int(batch))+".npz")
+        x = np.load("/home/sammy/gcohenlabfs/data/samuelgelman/data/non_equ_data/linear_response_H1.0/"+str(prefix)+"/samples_rank"+str(int(batch))+".npz")
         data_list.append(x)
     return data_list
 
