@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 def item_name(prefix, pdict, secondary_keys=[], excluded_keys=[]):
     """A function for consistently naming data directories according to parameters."""
     def dict_to_name(d):

@@ -83,7 +83,8 @@ ax[0].plot(onsager_T,onsager_S)
 ax[0].scatter(T,S)
 ax[0].errorbar(T,S,yerr=std_err[0:-2],fmt=' ')
 # ax[0].errorbar(T,S,yerr=std_err,fmt=' ')
-
+np.savetxt('S.dat',S)
+np.savetxt('error.dat',std_err)
 
 
 # Sfunc = interpolate.interp1d(T, S)
