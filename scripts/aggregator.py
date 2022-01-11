@@ -18,6 +18,11 @@ prefix = args.dirs[0]
 
 dirs = [s for s in os.listdir() if s.startswith(prefix)]
 
+#Special for the 512 samples
+# temps_remove = ['T4.0','T4.5','T5.0','T5.5','T6.0','T10.0','T15.0']
+# for temp in temps_remove:
+    # dirs.remove(temp)
+
 config = configparser.ConfigParser()
 config.read(str(dirs[0])+"/run.param")
 # T = float(config['input']['T'])

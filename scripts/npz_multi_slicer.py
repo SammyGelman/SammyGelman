@@ -1,4 +1,3 @@
-#!/usr/local/bin python3
 import numpy as np
 import configparser
 import argparse
@@ -16,13 +15,6 @@ batches = args.batches[0]
 prefix = args.dirs[0]
 
 dirs = [s for s in os.listdir() if s.startswith(prefix)]
-dirs_to_remove = []
-
-for dir_name in dirs:
-    if os.path.isfile(dir_name+"/slice_0.npz"):
-        dirs_to_remove.append(dir_name)
-for dir_name in dirs_to_remove:
-    dirs.remove(dir_name)
 
 config = configparser.ConfigParser()
 config.read(str(dirs[0])+"/run.param")
@@ -36,11 +28,7 @@ def batch_catcher(batches,T,H,C,prefix):
     random.shuffle(sample_batches_rand)
     data_list = []
     for batch in sample_batches_rand:
-        # x = np.load('samples_rank'+str(int(batch))+'.npz')
-        # x = time_extract('/gcohenlab/data/samuelgelman/data/non_equ_data/non_equilibrium_samples_H'+str(H)+'/T'+str(T)+'/samples_rank'+str(int(batch))+'.npz')
         x = np.load("/home/sammy/gcohenlabfs/data/samuelgelman/data/non_equ_data/phase_diagram_data/"+str(prefix)+"/samples_rank"+str(int(batch))+".npz")
-        # x = np.load("/home/sammy/gcohenlabfs/nobackup/sammy/"+str(prefix)+"/samples_rank"+str(int(batch))+".npz")
-        # x = np.load("/home/sammy/gcohenlabfs/data/samuelgelman/data/non_equ_data/linear_response_H1.0/"+str(prefix)+"/samples_rank"+str(int(batch))+".npz")
         data_list.append(x)
     return data_list
 

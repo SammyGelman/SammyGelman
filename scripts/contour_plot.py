@@ -17,4 +17,8 @@ y_axis = np.genfromtxt(args.y_axis[0])
 data = np.genfromtxt(args.data[0])
 
 plot = plt.contourf(x_axis,y_axis,data, levels=200, cmap='turbo')
+# plot = plt.contourf(x_axis,y_axis,data, levels=200, cmap='seismic')
+plt.colorbar()
+plt.savefig('contour_entropy.pdf')
 plt.show()
+

@@ -43,86 +43,90 @@ dropout = float(config['input']['dropout'])
 n_samples = int(config['input']['n_samples'])
 p = dict(config['input'])
 
-tfd = tfp.distributions
-tfk = tf.keras
-tfkl = tf.keras.layers
-
-#n_samples temp definition
-n_samples=100
-
-#load samples to attempt avoiding need to generate samples
-shape, data = like_mnist(T,L)
-data = data.shuffle(shuffbuff)
-samples_mc = data.take(n_samples)
-
-# tf.enable_v2_behavior()
-results = []
-
-# def image_preprocess(x):
-#     x['image'] = tf.cast(x['image'], tf.float32)
-#     return (x['image'],)  # (input, output) of the model
-#
-image_shape = (L,L,1)
-# Define a Pixel CNN network
-dist = tfd.PixelCNN(
-    image_shape=image_shape,
-    num_resnet=1,
-    num_hierarchies=3,
-    num_filters=32,
-    num_logistic_mix=5,
-    dropout_p=.3,
-    high=1
-)
-
-# Define the model input
-image_input = tfkl.Input(shape=image_shape)
-
-# Define the log likelihood for the loss fn
-log_prob = dist.log_prob(image_input)
-
-# Define the model
-model = tfk.Model(inputs=image_input, outputs=log_prob)
-model.add_loss(-tf.reduce_mean(log_prob))
 p['T']=T
 del p['t']
 del p['n_samples']
 
+tfd = tfp.distributions
+tfk = tf.keras
+tfkl = tf.keras.layers
+
 secondary_keys.remove('n_samples')
-# model_dir = item_name("/gcohenlab/data/samuelgelman/data/non_equ_models/model_weights",p,secondary_keys, excluded_keys=['n_samples'])
-# model_dir = item_name("/home/sammy/gcohenlabfs/data/samuelgelman/data/ising_models/investigation",p,secondary_keys, excluded_keys=['n_samples'])
-model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/final_models",p,secondary_keys)
 
-model.load_weights(str(model_dir)+"/weights/cp.ckpt")
+# for i in range(15):
+#n_samples temp definition
+n_samples=100
 
-start_time = time.perf_counter()
+for i in range(15):
+    #load samples to attempt avoiding need to generate samples
+    shape, data = like_mnist(T,L)
+    data = data.shuffle(1000)
+    data = data.repeat(2)
+    # data = data.shuffle(shuffbuff)
+    samples_mc = data.take(n_samples)
 
-# sample n images from the trained model
-print("Sampling...")
-# samples = dist.sample(n_samples)
+    # tf.enable_v2_behavior()
+    results = []
+    image_shape = (L,L,1)
 
-# # Plot samples:
-entropies = []
+    # Define a Pixel CNN network
+    dist = tfd.PixelCNN(
+        image_shape=image_shape,
+        num_resnet=1,
+        num_hierarchies=3,
+        num_filters=32,
+        num_logistic_mix=5,
+        dropout_p=.3,
+        high=1
+    )
 
-for sample in samples_mc:
-    entropies.append(dist.log_prob(sample['image'].numpy()).numpy())
-    # s = sample.numpy()[:,:,0]
+    # Define the model input
+    image_input = tfkl.Input(shape=image_shape)
 
-print(entropies)
+    # Define the log likelihood for the loss fn
+    log_prob = dist.log_prob(image_input)
 
-entropy = sum(entropies)/(n_samples*L**2)*(-1)
-results.append(entropy)
+    # Define the model
+    model = tfk.Model(inputs=image_input, outputs=log_prob)
+    model.add_loss(-tf.reduce_mean(log_prob))
 
-end_time = time.perf_counter()
-cnn_time = end_time - start_time
+    # model_dir = item_name("/gcohenlab/data/samuelgelman/data/non_equ_models/model_weights",p,secondary_keys, excluded_keys=['n_samples'])
+    # model_dir = item_name("/home/sammy/gcohenlabfs/data/samuelgelman/data/ising_models/investigation",p,secondary_keys, excluded_keys=['n_samples'])
+    model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/final_models",p,secondary_keys)
+    # model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/take_1",p,secondary_keys)
 
-with open('entropy.txt', 'a') as f:
-    f.write(str(results[0])+'\n')
-f.close()
+    # for i in range(15):
+    model.load_weights(str(model_dir)+"/weights_{0}/cp.ckpt".format(epochs))
 
-with open('timer.txt', 'a') as f:
-    f.write(str('This is the pixelCNN time')+'\n'+str(cnn_time)+'\n')
-f.close()
+    start_time = time.perf_counter()
 
+    # sample n images from the trained model
+    print("Sampling...")
+    # samples = dist.sample(n_samples)
+
+    # # Plot samples:
+    entropies = []
+
+    for sample in samples_mc:
+        entropies.append(dist.log_prob(sample['image'].numpy()).numpy())
+        # s = sample.numpy()[:,:,0]
+
+    print(entropies)
+
+    entropy = sum(entropies)/(n_samples*L**2)*(-1)
+    results.append(entropy)
+
+    end_time = time.perf_counter()
+    cnn_time = end_time - start_time
+
+    with open('final_entropy.txt', 'a') as f:
+        f.write(str(results[0])+'\n')
+    f.close()
+
+# with open('timer.txt', 'a') as f:
+#     f.write(str('This is the pixelCNN time')+'\n'+str(cnn_time)+'\n')
+# f.close()
+#
 #
 # start_time = time.perf_counter()
 #

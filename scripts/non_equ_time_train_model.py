@@ -76,18 +76,9 @@ def run(t):
     model.add_loss(-tf.reduce_mean(log_prob))
 
     # Compile and train the model
-    if T<=1:
-        model.compile(
-            optimizer=tfk.optimizers.Adam(learning_rate/4),
-            metrics=[])
-    elif T>=4:
-        model.compile(
-            optimizer=tfk.optimizers.Adam(learning_rate*3),
-            metrics=[])
-    else:
-        model.compile(
-            optimizer=tfk.optimizers.Adam(learning_rate),
-            metrics=[])
+    model.compile(
+        optimizer=tfk.optimizers.Adam(learning_rate),
+        metrics=[])
 
     # Save weights to  checkpoint file
     checkpoint_path = str(t)+"/weights/cp.ckpt"

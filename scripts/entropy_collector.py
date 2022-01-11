@@ -15,7 +15,7 @@ S = []
 std_err=[]
 C=50
 
-resolution = 5
+resolution = 50
 correction = C/resolution
 t_space = correlation*np.linspace(0,resolution-1,resolution)
 

@@ -18,7 +18,7 @@ H = float(config['input']['H'])
 
 S=[] 
 std_err=[]
-resolution = 10
+resolution = 50
 times = int(C/resolution)
 t_space = times*(np.linspace(0,resolution-1,resolution))
 print(t_space)

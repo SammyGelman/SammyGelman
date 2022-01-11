@@ -33,9 +33,9 @@ print("This is T: "), print(T)
 print("This is S: "), print(S)
 # add on for temps 10 and 15
 
-np.savetxt(str(t)+'_S.dat',S)
+np.savetxt(str(time)+'_S.dat',S)
 
-ax.plot(T)
+ax.plot(T,S)
 
 finalize_and_save(fig, 'temperature_entropy_'+str(time)+".pdf")
 plt.show()

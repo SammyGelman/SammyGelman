@@ -68,7 +68,8 @@ dist = tfd.PixelCNN(
     image_shape=image_shape,
     num_resnet=1,
     num_hierarchies=3,
-    num_filters=32,
+    # num_filters=32,
+    num_filters=16,
     num_logistic_mix=5,
     dropout_p=.3,
     high=1
@@ -90,7 +91,9 @@ del p['n_samples']
 secondary_keys.remove('n_samples')
 # model_dir = item_name("/gcohenlab/data/samuelgelman/data/non_equ_models/model_weights",p,secondary_keys, excluded_keys=['n_samples'])
 # model_dir = item_name("/home/sammy/gcohenlabfs/data/samuelgelman/data/ising_models/investigation",p,secondary_keys, excluded_keys=['n_samples'])
-model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/final_models",p,secondary_keys)
+# model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/final_models",p,secondary_keys)
+# model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/slow_learning_rate",p,secondary_keys)
+model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/test",p,secondary_keys)
 
 def write_entropy(epoch):
     model.load_weights(str(model_dir)+"/weights_"+str(epoch+1)+"/cp.ckpt")

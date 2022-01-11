@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 import os
-import configparser
 
-config = configparser.ConfigParser()
-config.read('run.param')
-exec_file = "/gcohenlab/data/samuelgelman/src/rust_ising/target/release/rust_ising"
+exec_file = "/home/sammy/gcohenlabfs/data/samuelgelman/src/rust_ising/target/release/rust_ising"
 help = """
 ising model runner.
 
@@ -28,13 +25,6 @@ OPTIONS:
     -T, --temperature <temperature>                    Temperature [default: 1.0]
 """
 
-l = int(config['input']['l'])
-T = float(config['input']['T'])
-s = int(config['input']['s'])
-e = int(config['input']['e'])
-d = int(config['input']['d'])
-run_string = "mpirun " + exec_file + f" -s={s} -l={l} -T={T} -d={d} -e={e} -w -W"
-
+run_string = "mpirun " + exec_file + f" -s=20000 -l=32 -T=2.0 -d=10000 -e=1500000 -w"
 print(run_string)
-
 os.system(run_string)

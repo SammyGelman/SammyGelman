@@ -59,7 +59,10 @@ def like_mnist(prefix,t,T,L,H,buffer_size=1):
             yield sample_prep(samples[sname])
 
     shape = (int(L),int(L),1)
+    # path ='/gcohenlab/nobackup/sammy/'+str(prefix)+'_T'+str(T)+"/slice_"+str(int(t))+'.npz'
     path ='/gcohenlab/data/samuelgelman/data/non_equ_data/phase_diagram_data/'+str(prefix)+'_T'+str(T)+"/slice_"+str(int(t))+'.npz'
+    # path ='/gcohenlab/data/samuelgelman/data/non_equ_data/linear_response_H'+str(H)+"/slice_"+str(int(t))+'.npz'
+    # path ='/gcohenlab/data/samuelgelman/data/non_equ_data/saturated_H'+str(H)+"/slice_"+str(int(t))+'.npz'
     # model_dir = item_name("/gcohenlab/data/samuelgelman/data/non_equ_data/non_equilibrium_samples",p,secondary_keys, excluded_keys=['n_samples'])
     ds_samples = tf.data.Dataset.from_generator(
         # data_gen,

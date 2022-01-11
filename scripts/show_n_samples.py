@@ -2,13 +2,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import argparse
 
-if len(sys.argv) != 2:
-    print(f"Usage: {sys.argv[0]} <filename>")
-    exit(1)
+parser = argparse.ArgumentParser()
+parser.add_argument('samples', type=int, nargs='+',
+                    help='number of samples to plot')
+parser.add_argument('file', type=str, nargs='+',
+                    help='file name')
 
-data = np.load(sys.argv[1])
-n = 100
+
+args = parser.parse_args()
+n = args.samples[0]
+file_name = args.file[0]
+
+# n=4
+ 
+# if len(sys.argv) != 2:
+#     print(f"Usage: {sys.argv[0]} <filename>")
+#     exit(1)
+#
+# data = np.load(sys.argv[1])
+data = np.load(file_name)
+print(data['arr_0'].shape)
+
 sn = int(np.sqrt(n))
 data_n = []
 

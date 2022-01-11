@@ -10,6 +10,7 @@ import os
 from matplotlib import cm
 from figures import *
 import argparse
+
 dirs = next(os.walk('.'))[1]
 # dirs = os.listdir()
 # dirs = dirs[0:10]
@@ -28,6 +29,8 @@ ax = create_single_panel(fig,xlabel="Temp",ylabel="Entropy",palette='magma')
 
 S_list=[]
 T_list=[]
+contour_dat = np.zeros((len(dirs),resolution))
+i=0
 
 for direc in dirs:
     config.optionxform = str
@@ -52,8 +55,9 @@ for direc in dirs:
             if data.shape == ():
                 data = data.reshape([1,])
             S.append(sum(data)/len(data))
+            contour_dat[i,t]=(sum(data)/len(data))
             std_err.append(np.std(data))
-
+            
     # for t in t_space:
     #     if t >= 20 and t<=33:
     #         t = int(t)
@@ -68,13 +72,8 @@ for direc in dirs:
         # else:
         #     S.append(float('nan'))
         #     std_err.append(float('nan'))
-        #
+        #    
     S_list.append(sum(S))
     T_list.append(T)
-
-print(S_list)
-ax.plot(T_list[0:15],S_list[0:15])
-plt.title("Mean Entropy")
-# plt.legend()
-# plt.show()
-finalize_and_save(fig, 'chaotic_regime_mean_entropy.pdf')
+    i+=1
+np.savetxt('contour.dat',contour_dat)
