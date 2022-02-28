@@ -116,4 +116,5 @@ def run(t):
 
 
 for t in t_space:
-    run(t)
+    if not os.path.isdir(str(t)): 
+        run(t)

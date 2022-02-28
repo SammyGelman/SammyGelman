@@ -27,7 +27,9 @@ delta_S = []
 error = []
 # dirs = sorted(argv[1:], key=get_temp)
 dirs = next(os.walk('.'))[1]
+print(dirs)
 raw_size = list(map(get_sizes, dirs))
+print(raw_size)
 size = np.sort([x for x in raw_size if x!= 0])
 
 #remove 512 while problematic

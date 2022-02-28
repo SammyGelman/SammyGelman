@@ -74,7 +74,8 @@ for i in range(15):
         image_shape=image_shape,
         num_resnet=1,
         num_hierarchies=3,
-        num_filters=32,
+        # num_filters=32,
+        num_filters=16,
         num_logistic_mix=5,
         dropout_p=.3,
         high=1
@@ -96,7 +97,9 @@ for i in range(15):
     # model_dir = item_name("/gcohenlab/data/samuelgelman/data/ising_models/take_1",p,secondary_keys)
 
     # for i in range(15):
-    model.load_weights(str(model_dir)+"/weights_{0}/cp.ckpt".format(epochs))
+    # model.load_weights(str(model_dir)+"/weights_{0}/cp.ckpt".format(epochs))
+    model.load_weights(str(model_dir)+"/weights_27/cp.ckpt")
+    
 
     start_time = time.perf_counter()
 

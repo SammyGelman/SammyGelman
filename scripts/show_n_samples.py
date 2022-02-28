@@ -23,7 +23,7 @@ file_name = args.file[0]
 #
 # data = np.load(sys.argv[1])
 data = np.load(file_name)
-print(data['arr_0'].shape)
+# print(data['arr_0'].shape)
 
 sn = int(np.sqrt(n))
 data_n = []

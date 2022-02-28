@@ -33,7 +33,8 @@ T = float(config['input']['T'])
 s = int(config['input']['s'])
 e = int(config['input']['e'])
 d = int(config['input']['d'])
-run_string = "mpirun " + exec_file + f" -s={s} -l={l} -T={T} -d={d} -e={e} -w -W"
+# run_string = "mpirun " + exec_file + f" -s={s} -l={l} -T={T} -d={d} -e={e} -w -W"
+run_string = "mpirun " + exec_file + f" -s={s} -l={l} -T={T} -d={d} -e={e} -w"
 
 print(run_string)
 

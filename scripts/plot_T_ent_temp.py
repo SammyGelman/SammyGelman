@@ -57,8 +57,8 @@ dirnames = glob.iglob('T*')
 #         std_err.append(float('nan'))
 
 for dirname in dirnames:
-    # entropy_filename = str(dirname) + '/entropy.txt'
-    entropy_filename = str(dirname) + '/final_entropy.txt'
+    entropy_filename = str(dirname) + '/entropy.txt'
+    # entropy_filename = str(dirname) + '/final_entropy.txt'
     print("Trying " + entropy_filename + "...")
     if os.path.isfile(entropy_filename):
         # data = np.loadtxt(entropy_filename)[-1:]

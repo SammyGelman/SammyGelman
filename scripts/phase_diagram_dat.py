@@ -2,11 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
-# fig, ax = subplots(2, 2)
-# ax[0][0].imshow((1-A) * B)
-# ax[1][0].imshow(norm_icov)
-# ax[1][1].imshow(norm_how_cyclic)
-
 #set range which matches available data, apologies for the hard coding
 mag = np.around(np.linspace(0.0,4.0,41),decimals=1)
 temp = np.around(np.linspace(0.0,4.0,41),decimals=1)
@@ -18,15 +13,18 @@ C = 50
 
 #average magnetization
 avg_mag = np.zeros((len(mag),len(temp)))
+
 #average of the absolute value of the magnetization
 avg_abs_mag = np.zeros((len(mag),len(temp)))
+
 #variance 
 var = np.zeros((len(mag),len(temp)))
+
 #covariance for the fit to our non_linear function (in this case a sin wave)
 cov = np.zeros((len(mag),len(temp)))
+
 #stack instances of time steps in a cycle for the length of the data collection and then caclculate the variance
 how_cyclic = np.zeros((len(mag),len(temp)))
-
 omega = 2 * np.pi / C
 
 #fucntion for the non-linear fit
