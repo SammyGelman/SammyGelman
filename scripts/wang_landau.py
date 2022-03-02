@@ -93,6 +93,11 @@ def find_bin(hist,E):
             return E, index
     return history
 
+def update_hist(hist, index):
+    key_list = list(hist.keys())
+    hist[key_list[index]] += 1
+    return hist
+
 def g(visit_log,E,f):
     if E in visit_log:
         visit_log.update({E : (visit_log[E] + f)})
