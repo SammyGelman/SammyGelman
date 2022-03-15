@@ -1,0 +1,888 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Part
+Masked Auto-Regressive Flow
+\end_layout
+
+\begin_layout Subsection*
+Past Theory
+\end_layout
+
+\begin_layout Paragraph*
+Definitions
+\end_layout
+
+\begin_layout Subparagraph*
+Autoregressive: 
+\end_layout
+
+\begin_layout Standard
+An autoregressive model is one that predicts the outcome of future events
+ based off of past events.
+ The model states that he new event is linearly dependednt on past events
+ plus an additional stochastic term.
+ We can write an autoregressive model of order p as:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+X_{t}=c+\stackrel[i=1]{p}{\sum}\beta_{i}X_{t-i}+\varepsilon_{t}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $X_{t}$
+\end_inset
+
+ is the value of our randome variable, c is a constant
+\begin_inset Formula $\beta_{1}...\beta_{p}$
+\end_inset
+
+ are the parameters of the model, 
+\begin_inset Formula $X_{t-i}$
+\end_inset
+
+ are the past observations and 
+\begin_inset Formula $\varepsilon_{t}$
+\end_inset
+
+ is noise.
+\end_layout
+
+\begin_layout Standard
+Which past terms to use in an autoregressive network case specific.
+ For the weather, for instance, it would probably make the most sense to
+ look at the weather of the last couple proceding days and also the weather
+ from the same day one year ago.
+ 
+\end_layout
+
+\begin_layout Subparagraph*
+Auto-correlation Function (ACF): 
+\end_layout
+
+\begin_layout Standard
+This is a model whose build is constructed using data based off of a time
+ series.
+ So we can make two series, one in which the data is presented, whose order
+ in the array is chronological of course.
+ Then there is another series whose values are very similar except for the
+ fact that the value is on a lag from the first series.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S_{t}=\left\{ 1,2,3,4,5,6\right\} ,S_{t-1}=\left\{ 0,1,2,3,4,5\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We look at a 'special' type of covariance called the auto-covariance.
+ This is simply the covariance of a series with itself.
+ We can calculate this covariance for any value of lag within the series.
+ for example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E[(S_{t}-\mu_{t})(S_{t-1}-\mu_{t-1})]=\zeta_{1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E[(S_{t}-\mu_{t})(S_{t-s}-\mu_{t-s})]=\zeta_{s}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E[(S_{t}-\mu_{t})(S_{t}-\mu_{t})]=\zeta_{0}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subparagraph*
+Partial Auto-Correlation Function (PACF):
+\end_layout
+
+\begin_layout Subparagraph
+Kullback-Leibler Divergence:
+\end_layout
+
+\begin_layout Standard
+The Kullback-Leibler divergence is a way to measure the difference of one
+ probability distribution to a second, reference distribution.
+ 
+\end_layout
+
+\begin_layout Standard
+Given two probability distributions, P and Q, where Q is a model meant to
+ represent P; the Kullback Liebler divergence is defined as the difference
+ in bits to encode samples of P using code optimized for Q rather than P.
+\end_layout
+
+\begin_layout Standard
+Wikipedia says that Kullback preferred the name discrimination information...my
+ question is why.
+ My best guess is that its because we are seeing the difference in bits
+ needed to encode samples of P when optimized for Q.
+ in other words this is the extra information needed while discriminating
+ between Q and P, the extra information needed to translate inferences made
+ by Q to get to P.
+\end_layout
+
+\begin_layout Standard
+One neat thing about the KL divergence is that it is quite intuitive in
+ the way it weighs instances of a random variable.
+ We can define the KL divergence as the integral over all values of a random
+ variable x taking: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\int p(x)*log(p(x)/q(x))dx
+\]
+
+\end_inset
+
+So for inconsequential values of p(x) even a large divergence in guesses,
+ p(x)/q(x), doesn't cause the distributions to have large KL divergence
+ values.
+ 
+\end_layout
+
+\begin_layout Subparagraph*
+Generative model: 
+\end_layout
+
+\begin_layout Standard
+Captures the probability P(X) (unlabeled) or the joint probability P(X,Y).
+ This being said it could generate samples that fit the given distribution.
+ Word completion, auto-correct, and much more.
+ 
+\end_layout
+
+\begin_layout Subparagraph*
+Likelihood: 
+\end_layout
+
+\begin_layout Standard
+What is the likelihood of a distribution given a certain piece of data.
+ This is often a function of parameters.
+ So what is the probability that a mouse weighs 30g given (i.e from a distributio
+n) its weight in spring.
+ L(season|weight) -> L(spring|30g).
+\end_layout
+
+\begin_layout Subparagraph*
+Mutual information: 
+\end_layout
+
+\begin_layout Standard
+The mutual information is also known as the information gain, it is a measure
+ of how much we learn about a random variable in a joint distribution given
+ an observation.
+ In other words it is a measure of how correlated data is.
+ The value is quantified as the KL divergence between a joint distribution
+ P(X,Y) and the products of their marginal distributions P(X) and P(Y).
+\end_layout
+
+\begin_layout Standard
+Another definition seen for the MI is where we have source information 
+\series bold
+x
+\series default
+ (inputs) and response variables 
+\series bold
+y
+\series default
+ (output).
+ We have the information gain being equal to:
+\begin_inset Formula 
+\[
+I(x,y)=H\left(y\right)-H\left(y|x\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where H(y) and H(y|x) are the marginal and conditional entropy values respective
+ly.
+ The goal here being to maximize the mapping of p(y|x) in order to maximize
+ I(x,y).
+\end_layout
+
+\begin_layout Subparagraph*
+Variational Information:
+\end_layout
+
+\begin_layout Subparagraph*
+Surrogates models: 
+\end_layout
+
+\begin_layout Standard
+A surrogate model is one that reflects the behavior of a system while containing
+ far less information and therefore being much less computationally expensive.
+\end_layout
+
+\begin_layout Subparagraph*
+Maximum entropy models: 
+\end_layout
+
+\begin_layout Standard
+The basic premise of this model to treat everything known about the system
+ with equal importance and to assume nothing of it outside of what is known.
+ To have the distribution be 'uniform' for all known data.
+\end_layout
+
+\begin_layout Subparagraph*
+Autoencoders: 
+\end_layout
+
+\begin_layout Standard
+An autoencoder can be broken up into three parts: compressor, bottleneck
+ and decompressor.
+ The input data exists in some high dimensional space, our goal is to move
+ that data over to a compressed space then feed the compressed data to through
+ another network of fully connected nodes to output an image which should
+ be similar to the input.
+ The difference can be quantified and will act as the loss for the network.
+\end_layout
+
+\begin_layout Subsubsection*
+Multinominal Logistic Regression: 
+\end_layout
+
+\begin_layout Standard
+This is a model whose dependent variable is measured at the nominal level.
+ The independent variables can be of nominal, ordinal or continuous nature.
+\end_layout
+
+\begin_layout Standard
+Multi-binomial Theorem: 
+\end_layout
+
+\begin_layout Paragraph*
+MADE
+\end_layout
+
+\begin_layout Paragraph*
+Autoencoder vs Autoregression
+\end_layout
+
+\begin_layout Standard
+Q: Why is it that the autoencoder doesn't give a tractable sense for the
+ normalized probability distribution but the autoregressive case does?
+\end_layout
+
+\begin_layout Standard
+We see that in the case of the autoencoder the loss function is the cross-entrop
+y loss.
+ If there are few hidden layers then the loss function is unclear whether
+ or not it could be a valid probability distribution but in the limit of
+ many hidden layers the network would learn to output exactly what comes
+ in.
+ In that case the network would learn that the value of any x the loss function
+ would be one with full confidence.
+ This means that the probability distribution summed over possible values
+ x would be more than one and therefore not a valid PDF.
+ This shows how the cross-entropy in this case is no a reliable probability.
+\end_layout
+
+\begin_layout Standard
+The next thing to prove is why the autoregressive model is in fact outputting
+ a valid PDF.
+ 
+\end_layout
+
+\begin_layout Standard
+So there are layers to this problem and I think that building the structure
+ from the ground up will best illustrate it.
+ 
+\end_layout
+
+\begin_layout Standard
+The auto-regressive model is one that creates functions based solely on
+ the actual distribution using the chain rule of joint probability distributions.
+ For the purpose of articulating this we will use a three dimensional vector.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boldsymbol{x}=x_{1},x_{2},x_{3};D=3
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P_{m}\left(\boldsymbol{x}\right)=P\left(x_{1}\right)P\left(x_{2}|x_{1}\right)P\left(x_{3}|x_{1},x_{2}\right)\label{eq:JPD}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can write all of these probabilities as parameterized functions which
+ can essentially be linear equations parameterized by weights and biases.
+ These functions can be the input to some other type of function which will
+ restrict its value to something between 0,1.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Sigmoid:f\left(x\right)=\frac{e^{x}}{e^{x}+1}\label{eq:sigmoid}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P\left(x_{1}\right)=P_{1}=f\left(b_{1}^{1}\right)=F_{1}\left(\theta_{1}\right)\label{eq:P1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P\left(x_{2}\right)=P_{2}\left(x_{1}\right)=f\left(W_{1}^{2}x_{1}+b_{1}^{2}\right)=F_{2}\left(x_{1};\bar{\theta}_{2}\right)\label{eq:P2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P\left(x_{3}\right)=P_{3}\left(x_{1},x_{2}\right)=f\left({\displaystyle \stackrel[i=1]{2}{\sum}}W_{i}^{2}x_{i}+b_{2}^{2}\right)=F_{3}\left(x_{1},x_{2};\bar{\theta}_{3}\right)\label{eq:P3}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From this point we can look at 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:JPD"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and see that we have a set of function being multiplied together to give
+ us the probability for a given instance of a sample.
+ 
+\end_layout
+
+\begin_layout Standard
+This form will be easier to calculate by taking the logarithm.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\log\left(P_{m}\boldsymbol{\left(x\right)}\right)=\stackrel[d=1]{D}{\sum}\log\left(F_{d}\right)\label{eq:logP_m}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At this point we have an equation for the actual distribution.
+ The next step is to define a loss function to train our model on.
+ A convenient function is the Kullbeck-Leibler Divergence (tag to KL Divergence)
+ because it is a measure of a distance between two distributions and because
+ that distance is zero when the two distributions are the same, thus making
+ it obvious that minimizing the function will give us usable values for
+ our weights.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+D_{KL}\left(P\Vert Q\right)=\underset{x\epsilon X}{\sum}P\left(x\right)\log\left(\frac{P(x)}{Q(x)}\right)\label{eq:DKL_def}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to do that we need a function for a distribution that reflects
+ the true distribution.
+ In our case we have sample data taken from our distribution of interest
+ (tag for P_real).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P_{\mathrm{real}}\left(x_{1},x_{2},x_{3}\right)\rightarrow\left(x_{1}^{s},x_{2}^{s},x_{3}^{s}\right);\left[s=1,..,N\right]\label{eq:P_real}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since this is all the information we have we can use that value to make
+ what we will name the prior distribution (tag to prior dist).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+P_{\mathsf{\mathrm{prior}}}\left(x_{1},x_{2},x_{3}\right)=\frac{1}{N}\underset{s}{\sum}\delta\left(\boldsymbol{x}-\boldsymbol{x}_{s}\right)\label{eq:P_prior}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Simply put the prior distribution will be a delta functions where we find
+ a spike of size 1/N wherever we have an observed sample.
+ 
+\end_layout
+
+\begin_layout Standard
+Using this as a reference point we can compare our models distribution to
+ the prior.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+D_{KL}\left(P_{\mathrm{prior}}||P_{\mathrm{m}}\right)=\int P_{\mathrm{prior}}\left(\overrightarrow{x}\right)\log\left(\frac{P_{\mathrm{prior}}\boldsymbol{\left(x\right)}}{P_{\mathrm{m}}\left(\boldsymbol{x}\right)}\right)d\boldsymbol{x}\label{eq:DKL_model}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can use the property of logarithms to split the division term inside
+ the logarithm into two, one of which is independent on P_m and is therefore
+ a constant value.
+ Because what we care about is not the absolute value of the KL Divergence
+ but instead we just want to minimize the function we can ignore that term.
+ We will do the same thing in ignoring the 1/N term in front of our remaining
+ term in eq.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+D_{KL}(P_{prior}||P_{m})=-\frac{1}{N_{s}}\underset{s}{\sum}\int\delta(\overrightarrow{x}-\overrightarrow{x}_{s})P(\overrightarrow{x})=-\underset{s}{\sum}log(P_{m}(\overrightarrow{x}_{s}))\label{eq:DKL_model_2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This design allows us to leverage the rule of logarithms to free ourselves
+ from the curse of dimentionality.
+ Our terms are now linearly dependent and therefore we can take steps along
+ our loss function and move down it step by step, batch by batch.
+\end_layout
+
+\begin_layout Subsubsection*
+Combining autoregression and autoencoders:
+\end_layout
+
+\begin_layout Standard
+We have seen the benefit of having an autoregressive model for the sake
+ of estimating towards the actual probability distribution for a given model.
+ We have also seen how nicely autoencoders can learn a distribution based
+ off of a set of samples.
+ The observed downside of this is that it doesn't produce a valid probability
+ distribution.
+ 
+\end_layout
+
+\begin_layout Standard
+The goal here is to combine the autoencoders ability to learn and estimate
+ a distribution based on input data with the autoregessive bound to only
+ move forward based off of conditonal probabilites which are all valid distribut
+ions.
+ This will force the autoencoder to learn a kosher distribution that will
+ then a viable estimate for entropy.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+The masked in MADE:
+\end_layout
+
+\begin_layout Standard
+The masks are a convinent way to silence connections.
+ We dont want values of x
+\begin_inset Formula $_{i}$
+\end_inset
+
+to be aware of values x
+\begin_inset Formula $_{j>i}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+At each layer of our network we can multiply the nodes with a 'mask' or
+ a matrix that snuffs out the unwanted connections.
+ Luckily the logistics of this implementation were done by other people,
+ all we have to do is tell the network how to count the pixels and the masks
+ will automatically enforce a valid chain of conditional probabilities.
+\end_layout
+
+\begin_layout Paragraph*
+MAF
+\end_layout
+
+\begin_layout Standard
+After samples are generated they need to be fed into the neural net as tensorflo
+w database object.
+ Code was written to do that.
+ The way this works is that for a given temerature, we feed the pixelCNN
+ the samples and then it out puts a tractable probability distribtuion which
+ we can then use to take the log probability of the distribution at each
+ point in order to give us our entropy estimation.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+Pixel CNN
+\end_layout
+
+\begin_layout Standard
+So when getting into the nitty gritty we are looking at how to train a neural
+ network to maintian the full distribution.
+ This was the conditional probabilities being stacked throughout the entire
+ image pixel by pixel.
+ Why does that necesarily give a true distribution?
+\end_layout
+
+\begin_layout Standard
+So given this approach for getting the log likelihood of any pixels the
+ next question goes to optimizing a given method.
+ I.e what is the best way to construct the conditional distributions.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+Generating Samples
+\end_layout
+
+\begin_layout Standard
+We need to generate samples of our Ising model at given temperatures.
+ By running a simulation we can take snapshots of the model at a given state.
+ It is important to note that there needs to be sufficient wait time in
+ between snap shots.
+ This is called the decorrelation time and it is usually sufficient to wait
+ n^2 steps where n is the length of an Ising model.
+ 
+\end_layout
+
+\begin_layout Standard
+There is also a need to wait for the system to reach equilibrium for samples
+ to accurately represent the system.
+ This number was chosen by eye based on samples resembling equilibrium visually,
+ usually 10,000 steps.
+ 
+\end_layout
+
+\begin_layout Standard
+Here is a good time to distinguish between the Wolff algorithm vs the Metropolis
+ algorithm.
+ Where the Metropolis algorithm only flips one spin at a time, the Wolff
+ algorithm will flip clusters.
+\end_layout
+
+\begin_layout Standard
+This is useful for generating samples at low temperatures because when it
+ finally finds a valid move it creates an additional sample that is very
+ different than the first but which is still as equally valid statistically.
+ Using the metropolis algorithm it would take many many accepted steps to
+ change the appearance of the model.
+ 
+\end_layout
+
+\begin_layout Standard
+In generating data used using either of these two algorithms it is important
+ to check that the data is not overly correlated.
+ I wrote a python script to this end.
+\end_layout
+
+\begin_layout Paragraph*
+Correlation
+\end_layout
+
+\begin_layout Standard
+We generate samples concurrently in several different cores each being a
+ realization of the Wolff algorithm.
+ 
+\end_layout
+
+\begin_layout Standard
+We organize our data using three indices: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S_{d}^{n,i}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where we have D realizations, N total samples in each realization and I
+ pixels in each sample.
+ 
+\end_layout
+
+\begin_layout Standard
+We then calculate the mean value for an individual pixel to have across
+ realizations.
+ 
+\begin_inset Formula 
+\[
+\bar{S}^{n,i}=\frac{1}{D}\stackrel[d=1]{D}{\sum}S_{d}^{n,i}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This mean value will be calculated for each value in each sample.
+ The term for the variance of our pixel values through all realizations
+ is then: 
+\begin_inset Formula 
+\[
+var(n,i)=\frac{1}{D}\stackrel[d=1]{D}{\sum}\left(S_{d}^{n,i}-\bar{S}^{n,i}\right)^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From here we can write a general function for the covariance for any pixel
+ with any other pixel in a given realization:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+cov(n,i;n',i')=\frac{1}{D}\stackrel[d=1]{D}{\sum}\left[\left(S_{d}^{n,i}-\bar{S}^{n,i}\right)\left(S_{d}^{n',i'}-\bar{S}^{n',i'}\right)\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For our purposes we want to know how correlated nearest neighbors are to
+ one another because they have the highest 'risk' of being sampled prematurely:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+cov(n,i;n+1,i)=\frac{1}{D}\stackrel[d=1]{D}{\sum}\left[\left(S_{d}^{n,i}-\bar{S}^{n,i}\right)\left(S_{d}^{n+1,i}-\bar{S}^{n+1,i}\right)\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This gives us everything we need in order to calculate the correlation:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+corr\left(S\right)=\frac{1}{I}\frac{1}{\left(N-1\right)}\stackrel[i=1]{I}{\sum}\stackrel[n=1]{N-1}{\sum}\frac{cov(i,n;i,n+1)}{\left(\mathrm{var}\left(i,n\right)*\mathrm{var}(i,n+1)\right)^{0.5}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Two tests were done to make sure that the code was working as predicted.
+ The first is by the use of anti-correlated data.
+ That is, what is the likely hood that an observation will be the opposite
+ of what was observed before.
+ To test this data was contrived which alternated between matricies of fully
+ zeros and fully ones.
+ For each realizarion of this the order switched.
+ Our code outputed -0.999999995 so that test was a pass.
+ 
+\end_layout
+
+\begin_layout Standard
+Next we took ising data generated by our montecarlo code and controlled
+ the amount of steps in between each recorded data point.
+ The figure belowe containes these results.
+ 
+\end_layout
+
+\begin_layout Standard
+Results:
+\end_layout
+
+\end_body
+\end_document
